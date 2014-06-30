@@ -1,0 +1,66 @@
+﻿@model CDNVN.BibleOnline.Models.Content
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Content</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Book.CodeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Book.CodeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Chapter)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Chapter)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Verse)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Verse)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Word)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Word)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tag)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tag)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

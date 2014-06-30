@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CDNVN.BibleOnline.Models.Content>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    
+    @using (Html.BeginForm("Index", "ContentManager", FormMethod.Get, new { id = "ViewBible" }))
+    {
+        @Html.TextBox("ad", Request.QueryString["ad"])
+        @Html.Hidden("v", Request.QueryString["v"])
+        <button type="submit">Tìm</button>
+    }
+
+    @Html.ActionLink("Mục lục", "Index", "BookManager", new { v = Request.QueryString["v"] }, null)
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Book.CodeName)
+
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th style="width: 40%">
+            @Html.DisplayNameFor(model => model.Word)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book.Name)
+                @Html.DisplayFor(modelItem => item.Chapter):@Html.DisplayFor(modelItem => item.Verse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Word)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>

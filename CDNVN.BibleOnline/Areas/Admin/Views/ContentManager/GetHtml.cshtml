@@ -1,0 +1,14 @@
+﻿@model String[]
+@{
+    ViewBag.Title = "GetHtml";
+}
+<h2>GetHtml</h2>
+<ol>
+    @foreach (var item in Model)
+    {
+        <li>
+            @(item)
+        </li>
+    }
+</ol>
+
