@@ -7,16 +7,18 @@ using CDNVN.BibleOnline.Models;
 
 namespace CDNVN.BibleOnline.Controllers
 {
-    public class ReadController : Controller
+    public class SearchController : Controller
     {
-        //
-        // GET: /Read/
         private BibleDBEntities db = new BibleDBEntities();
-        public ActionResult Index(string v="", string ad="")
+        //
+        // GET: /Search/
+        public ActionResult Index()
         {
-            ViewBag.BibleCode = new SelectList(db.Bibles, "Version", "Name", v);
             return View();
         }
+
+
+        //
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -1,4 +1,12 @@
-﻿@model String[]
+﻿@model String
+           
+<p>
+    @Model
+</p>
+<p>
+    @Html.Raw(Model)
+</p>
+@*@model String[]
 @{
     ViewBag.Title = "GetHtml";
 }
@@ -10,5 +18,5 @@
             @(item)
         </li>
     }
-</ol>
+</ol>*@
 

@@ -28,7 +28,7 @@ namespace CDNVN.BibleOnline.Areas.Admin.Controllers
             var arr = ad.Split(' ');
             var contents =
                 _db.Bibles.Single(bible => bible.Version.ToLower() == v.ToLower())
-                    .Books.Single(book => book.CodeName.ToLower() == arr[0])
+                    .Books.Single(book => book.CodeName.ToLower() == arr[0].ToLower())
                     .Contents.Where(c => c.Chapter == Int32.Parse(arr[1]));
             return View(contents.ToList());
         }
@@ -132,8 +132,53 @@ namespace CDNVN.BibleOnline.Areas.Admin.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
+        public ActionResult GetHtml(string version)
+        {
+            var abb = "Gen,Exod,Lev,Num,Deut,Josh,Judg,Ruth,1Sam,2Sam,1Kgs,2Kgs,1Chr,2Chr,Ezra,Neh,Esth,Job,Ps,Prov,Eccl,Song,Isa,Jer,Lam,Ezek,Dan,Hos,Joel,Amos,Obad,Jonah,Mic,Nah,Hab,Zeph,Hag,Zech,Mal,Matt,Mark,Luke,John,Acts,Rom,1 Cor,2 Cor,Gal,Eph,Phil,Col,1Thess,2Thess,1Tim,2Tim,Titus,Phlm,Heb,Jas,1Pet,2Pet,1John,2John,3John,Jude,Rev".Replace(" ", "").Split(',');
 
-        public ActionResult GetBible(string version)
+            const string urlFormat = "http://bibles.org/vie-RVV11/{0}/{1}";
+            var url = string.Format(urlFormat, abb[33],1);
+            var html = "";
+            using (var client = new WebClient())
+            {
+                client.Encoding = System.Text.Encoding.UTF8;
+                html = client.DownloadString(url);
+                //...
+            }
+
+            // ReSharper disable StringIndexOfIsCultureSpecific.1
+            html = html.Remove(0, html.IndexOf("class=\"chapter\">") + "class=\"chapter\">".Length);
+            html = html.Remove(html.IndexOf("<div class=\"copyright-statement\">"), html.Length - html.IndexOf("<div class=\"copyright-statement\">"));
+
+            html = new Regex(@"<.h[0-9]*?>").Replace(html, "%");
+            html = new Regex(@"<h[0-9]...........").Replace(html, "%");
+            html = new Regex(@"<.*?>").Replace(html, "~");
+            html = new Regex(@"\s~|~\s").Replace(html, "~");
+            html = new Regex(@"~+").Replace(html, "~");
+            html = html.Replace("~+", " ");
+            html = html.Replace("%>", "%");
+            html = html.Replace("~%", "~0~%");
+            html = new Regex(@"%\s").Replace(html, "");
+            html = new Regex(@"\s+~").Replace(html, "~");
+            html = new Regex(@"~$").Replace(html, "");
+            //return new Regex(@"-\d+-").Split(html);
+
+            var bibleGayway = "Sáng Thế,Xuất Hành,Lê-vi,Dân Số,Phục Truyền Luật Lệ,Giô-sua,Các Thủ Lãnh,Ru-tơ,I Sa-mu-ên,II Sa-mu-ên,I Các Vua,II Các Vua,I Sử Ký,II Sử Ký,Ê-xơ-ra,Nê-hê-mi-a,Ê-xơ-tê,Gióp,Thánh Thi,Châm Ngôn,Giảng Sư,Nhã Ca,I-sai-a,Giê-rê-mi-a,Ai Ca,Ê-xê-ki-ên,Ða-ni-ên,Hô-sê-a,Giô-ên,A-mốt,Ô-ba-đi-a,Giô-na,Mi-ca,Na-hum,Ha-ba-cúc,Xê-pha-ni-a,Ha-gai,Xê-ca-ri-a,Ma-la-ki,Ma-thi-ơ,Mác,Lu-ca,Giăng,Công Vụ Các Sứ đồ,Rô-ma,I Cô-rinh-tô,II Cô-rinh-tô,Ga-la-ti,Ê-phê-sô,Phi-líp,Cô-lô-se,I Thê-sa-lô-ni-ca,II Thê-sa-lô-ni-ca,I Ti-mô-thê,II Ti-mô-thê,Tít,Phi-lê-môn,Hê-bơ-rơ,Gia-cơ,I Phi-rơ,II Phi-rơ,I Giăng,II Giăng,III Giăng,Giu-đe,Khải Huyền".Split(',');
+            //var urlFormat = "https://www.biblegateway.com/passage/?search={1}+{2}&version=VIET";
+            //var html = "";
+            //using (var client = new WebClient())
+            //{
+            //    client.Encoding = System.Text.Encoding.UTF8;
+            //    html = client.DownloadString("https://www.biblegateway.com/passage/?search=Sáng Thế+2&version=Viet");
+            //    //...
+            //}
+            //html = html.Remove(0, html.IndexOf("<p class=\"chapter"));
+            //html = html.Remove(html.IndexOf("<div class=\"publisher-info-bottom\">"), html.Length - html.IndexOf("<div class=\"publisher-info-bottom\">"));
+
+            return View((object)html);
+        }
+
+        public ActionResult GetBibleA(string version)
         {
             var bible = _db.Bibles.Single(b => b.Version.ToLower() == version.ToLower());
             foreach (var book in bible.Books)
