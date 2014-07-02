@@ -1,11 +1,15 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-}
+﻿@model IEnumerable<CDNVN.BibleOnline.Models.Content>
 
-<h2>Index</h2>
 
-@using (Html.BeginForm())
+@*<h2>@ViewBag.Title</h2>*@
+@if (Model != null && Model.Any())
 {
-    @Html.DropDownList("")
+    foreach (var item in Model)
+    {
+        <p>
+            @Html.Raw(item.Title)
+            <span>@item.BookId @item.Chapter : @item.Verse</span>
+            @item.Word
+        </p>
+    }
 }

@@ -21,6 +21,12 @@ namespace CDNVN.BibleOnline.Areas.Admin.Controllers
             return View(bibles.ToList());
         }
 
+        public ActionResult CheckBible()
+        {
+            var bibles = db.Bibles.Include(b => b.Language);
+            return View(bibles.ToList());
+        }
+
         // GET: /Admin/BibleManager/Details/5
         public ActionResult Details(int? id)
         {

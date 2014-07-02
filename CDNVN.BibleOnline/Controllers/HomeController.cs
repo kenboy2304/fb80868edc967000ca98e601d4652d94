@@ -3,28 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CDNVN.BibleOnline.Models;
 
 namespace CDNVN.BibleOnline.Controllers
 {
     public class HomeController : Controller
     {
+        private BibleDBEntities db = new BibleDBEntities();
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        [HttpPost]
+        public ActionResult Index(string v = "", string ad = "")
         {
-            ViewBag.Message = "Your application description page.";
-
+            if (!string.IsNullOrWhiteSpace(v) && !string.IsNullOrWhiteSpace(ad))
+            {
+                return RedirectToAction("Index", "Read", new {v = v, ad = ad});
+            }
             return View();
         }
-
-        public ActionResult Contact()
+        public ActionResult _SearchForm()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.BibleCode = new SelectList(db.Bibles, "Version", "Name");
+            return PartialView("_SearchForm");
+        }
 
-            return View();
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

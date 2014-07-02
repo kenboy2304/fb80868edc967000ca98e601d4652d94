@@ -1,0 +1,6 @@
+﻿@using (Html.BeginForm("Index","Home",FormMethod.Post))
+{
+    
+    @Html.DropDownList("v", (SelectList)ViewBag.BibleCode,"----chọn----")
+    @Html.TextBox("ad")
+}

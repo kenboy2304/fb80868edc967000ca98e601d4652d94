@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CDNVN.BibleOnline.Models.Bible>
+@{
+    ViewBag.Title = "CheckBible";
+}
+<div class="row">
+    @foreach (var bible in Model)
+    {
+        <div class="col-lg-6">
+            <table class="table">
+                <tr>
+                    <th>
+                        @bible.Name
+                    </th>
+                </tr>
+                @foreach (var book in bible.Books)
+                {
+
+                    <tr>
+                        @if (bible.Version.ToLower()=="btt")
+                        {
+                            <td style="text-align: right">
+                                @book.Name
+                                <br />
+                                @for (var i = 1; i <= book.TotalChapter; i++)
+                                {
+                                    <text>@i - @book.Contents.Where(v => v.Chapter == i).Count() ,</text>
+                                    <hr />
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @book.Name
+                                <br />
+                                @for (var i = 1; i <= book.TotalChapter; i++)
+                                {
+                                    <text>@i - @book.Contents.Where(v => v.Chapter == i).Count() ,</text>
+                                    <hr />
+                                }
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+</div>

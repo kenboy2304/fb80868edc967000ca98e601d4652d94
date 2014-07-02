@@ -94,6 +94,7 @@ namespace CDNVN.BibleOnline.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult Edit([Bind(Include="Id,Chapter,Verse,Title,Word,Tag,BookId")] Content content)
         {
             if (ModelState.IsValid)
@@ -137,7 +138,7 @@ namespace CDNVN.BibleOnline.Areas.Admin.Controllers
             var abb = "Gen,Exod,Lev,Num,Deut,Josh,Judg,Ruth,1Sam,2Sam,1Kgs,2Kgs,1Chr,2Chr,Ezra,Neh,Esth,Job,Ps,Prov,Eccl,Song,Isa,Jer,Lam,Ezek,Dan,Hos,Joel,Amos,Obad,Jonah,Mic,Nah,Hab,Zeph,Hag,Zech,Mal,Matt,Mark,Luke,John,Acts,Rom,1 Cor,2 Cor,Gal,Eph,Phil,Col,1Thess,2Thess,1Tim,2Tim,Titus,Phlm,Heb,Jas,1Pet,2Pet,1John,2John,3John,Jude,Rev".Replace(" ", "").Split(',');
 
             const string urlFormat = "http://bibles.org/vie-RVV11/{0}/{1}";
-            var url = string.Format(urlFormat, abb[33],1);
+            var url = string.Format(urlFormat, abb[1],36);
             var html = "";
             using (var client = new WebClient())
             {
