@@ -26,7 +26,8 @@ namespace CDNVN.BibleOnline.Controllers
         }
         public ActionResult _SearchForm()
         {
-            ViewBag.BibleCode = new SelectList(db.Bibles, "Version", "Name");
+            var v = Request.QueryString["v"];
+            ViewBag.BibleCode = new SelectList(db.Bibles, "Version", "Name",v);
             return PartialView("_SearchForm");
         }
 

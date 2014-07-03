@@ -19,7 +19,7 @@ namespace CDNVN.BibleOnline.Controllers
             {
                 v = "btt";
             }
-            if (new Regex("/d+$").IsMatch(ad))
+            if (string.IsNullOrWhiteSpace(ad)||new Regex("/d+$").IsMatch(ad))
             {
                 return View();
             }
@@ -34,7 +34,7 @@ namespace CDNVN.BibleOnline.Controllers
                 .OrderBy(c=>c.Chapter).ThenBy(c=>c.Verse);
                 
             ViewBag.BibleCode = new SelectList(db.Bibles, "Version", "Name", v);
-            return View(r);
+            return View(r.ToList());
         }
 
         protected override void Dispose(bool disposing)

@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<CDNVN.BibleOnline.Models.Content>
 
 
-@*<h2>@ViewBag.Title</h2>*@
+<h2>@ViewBag.Title</h2>
 @if (Model != null && Model.Any())
 {
     foreach (var item in Model)
     {
         <p>
             @Html.Raw(item.Title)
-            <span>@item.BookId @item.Chapter : @item.Verse</span>
-            @item.Word
+            <span>@item.Chapter : @item.Verse</span>
+            @Html.Raw(item.Word)
         </p>
     }
 }

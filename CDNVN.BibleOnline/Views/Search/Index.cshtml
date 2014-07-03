@@ -1,7 +1,16 @@
-﻿
-@{
-    ViewBag.Title = "Search";
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<CDNVN.BibleOnline.Models.Content>
+
+
+<h2>@ViewBag.Title</h2>
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <a href="#">@item.Book.Name @item.Chapter : @item.Verse</a>
+        <p> 
+            @Html.Raw(item.Word)
+        </p>
+    }
+    @Html.PagedListPager(Model, page => Url.Action("Index","Search", new { page = page }))
 }
-
-<h2>Search</h2>
-

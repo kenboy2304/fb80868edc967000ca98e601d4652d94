@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CDNVN.BibleOnline.Models;
+using PagedList;
 
 namespace CDNVN.BibleOnline.Controllers
 {
@@ -12,9 +13,18 @@ namespace CDNVN.BibleOnline.Controllers
         private BibleDBEntities db = new BibleDBEntities();
         //
         // GET: /Search/
-        public ActionResult Index()
+        public ActionResult Index(string v="", string q="", int page =1)
         {
-            return View();
+            if (string.IsNullOrWhiteSpace(v))
+                v = "btt";
+            if (string.IsNullOrWhiteSpace(q)) return View();
+
+            var contents =
+                db.Contents.Where(c => c.Book.Bible.Version.ToLower() == v.ToLower()).Where(c => c.Tag.Contains(q))
+                .OrderBy(c=>c.Verse).ThenBy(c=>c.Chapter).ThenBy(c=>c.BookId).ToPagedList(page,15);
+
+
+            return View(contents);
         }
 
 
