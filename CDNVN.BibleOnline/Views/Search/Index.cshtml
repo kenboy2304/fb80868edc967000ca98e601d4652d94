@@ -1,16 +1,103 @@
-﻿@using PagedList.Mvc
+﻿@using System.Web.UI.WebControls
+@using PagedList.Mvc
 @model PagedList.IPagedList<CDNVN.BibleOnline.Models.Content>
+@{
+    var count = 1;
+    var bible = (SelectList)ViewBag.Bible;
+}
 
 
-<h2>@ViewBag.Title</h2>
-@if (Model != null && Model.Any())
-{
-    foreach (var item in Model)
+<div class="jumbotron">
+    <h2>Tìm kiếm: @ViewBag.Title -@Model.TotalItemCount kết quả</h2>
+    <div class="col-md-6">
+        @using (Html.BeginForm("Index", "Search", FormMethod.Get))
+        {
+            <p>
+                @Html.TextBox("q", Request.QueryString["q"], new { @class = "form-control", })
+            </p>
+            <p>
+                @Html.DropDownList("v", (SelectList)ViewBag.Bible, new { @class = "bootstrap-select form-control", data_width = "100%" })
+            </p>
+            <p>
+                @Html.DropDownList("from", (SelectList)ViewBag.FromBook, new { @class = "bootstrap-select form-control", data_live_search = "true", data_width = "100%" })
+            </p>
+            <p>
+                @Html.DropDownList("to", (SelectList)ViewBag.ToBook, new { @class = "bootstrap-select form-control", data_live_search = "true", data_width = "100%" })
+            </p>
+            <p><button type="submit" class="btn btn-danger">Tìm kiếm</button></p>
+        }
+        
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="row">
+    @if (Model != null && Model.Any())
     {
-        <a href="#">@item.Book.Name @item.Chapter : @item.Verse</a>
-        <p> 
-            @Html.Raw(item.Word)
-        </p>
+        <div id="content-search">
+            @foreach (var item in Model)
+            {
+                var ad = item.Book.Name + " " + @item.Chapter + ":" + item.Verse;
+                <a href="@Url.Action("Index","Read",new{v=Request.QueryString["v"], q=ad})">@count/ @ad</a>
+                <p>
+                    @Html.Raw(item.Word)
+                </p>
+                count++;
+            }
+        </div>
+        <div class="loading">
+            <img src="@Url.Content("~/Content/image/ajax-loader.gif")" />
+        </div>
     }
-    @Html.PagedListPager(Model, page => Url.Action("Index","Search", new { page = page }))
+</div>
+<div class="row"><h3>Tìm kiếm: @ViewBag.Title -@Model.TotalItemCount kết quả</h3></div>
+@section scripts
+{
+    <script type="text/javascript">
+        $('.bootstrap-select').selectpicker();
+
+        var search = '@Request.QueryString["q"]';
+        $(document).ready(function () {
+            $("#content-search p:contains('@Request.QueryString["q"]')").css("background-color", "yellow");
+            $('.loading').hide();
+            var page = parseInt('@Model.PageNumber');
+            var pageCount = parseInt('@Model.PageCount');
+            var c = parseInt('@count');
+
+            $(window).scroll(function () { //detect page scroll
+
+                if ($(window).scrollTop() + $(window).height() == $(document).height())  //user scrolled to bottom of the page?
+                {
+
+                    if (page + 1 <= pageCount) {
+                        page++;
+                        $.ajax({
+                            url: '@Url.Action("Json")',
+                            data: JSON.stringify({ v: '@Request.QueryString["v"]', q: '@Request.QueryString["q"]', from: '@Request.QueryString["from"]', to: '@Request.QueryString["to"]', page: page }),
+                            contentType: "application/json",
+                            traditional: true,
+                            type: "POST",
+                            beforeSend: function () {
+                                $('.loading').show();
+                            },
+                            success: function (r) {
+                                var html = "";
+                                for (var i = 0; i < r.length; i++) {
+                                    html = html + "<a href='" + r[i].Url + "'>" + c + ". " + r[i].Adress + "</a>";
+                                    html = html + "<p>" + r[i].Word + "</p>";
+                                    c++;
+                                }
+                                $('#content-search').append(html);
+                                $('.loading').hide();
+                            },
+                            error: function () {
+                                alert("erro");
+                                $('.loading').hide();
+                            }
+                        });
+                    }
+
+                }
+            });
+        });
+    </script>
 }

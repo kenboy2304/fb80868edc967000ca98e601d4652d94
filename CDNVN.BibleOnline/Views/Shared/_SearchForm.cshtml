@@ -1,6 +1,6 @@
-﻿@using (Html.BeginForm("Index","Home",FormMethod.Post))
+﻿@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-inline navbar-form" }))
 {
-    
-    @Html.DropDownList("v", (SelectList)ViewBag.BibleCode,"----chọn----")
-    @Html.TextBox("ad")
+    @Html.TextBox("q", Request.QueryString["q"], new { @class = "form-control" })
+    @Html.DropDownList("v", (SelectList)ViewBag.BibleCode,"----chọn----", new {@class = "form-control bootstrap-select"}) 
+    <button type="submit" class="btn btn-danger">Tìm kiếm</button>
 }

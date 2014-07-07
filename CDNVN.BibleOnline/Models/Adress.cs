@@ -127,14 +127,14 @@ namespace CDNVN.BibleOnline.Models
             var book = "";
             for (int i = 0; i < str.Length; i++)
             {
-                if (char.IsNumber(str[i]))
+                if (char.IsNumber(str[i])&&i!=0)
                 {
                     break;
                 }
                 book = book + str[i];
             }
             Book = RemoveVietnamese.RemoveSpace(book);
-            Adress = new Regex(@"/s+").Replace(str.Replace(book, ""),"");
+            Adress = new Regex(@"\s+").Replace(str.Replace(book, ""),"");
         }
 
     }

@@ -1,15 +1,46 @@
 ﻿@model IEnumerable<CDNVN.BibleOnline.Models.Content>
 
-
+<div class="btn-group">
+    <button type="button" class="btn-read-style btn btn-default active" data-read="read-block">Block</button>
+    <button type="button" class="btn-read-style btn btn-default" data-read="read-inline">Inline</button>
+</div>
 <h2>@ViewBag.Title</h2>
-@if (Model != null && Model.Any())
-{
-    foreach (var item in Model)
+@{ var chapter = 0;}
+<div id="read-block" class="row read-content">
+    @if (Model != null && Model.Any())
     {
-        <p>
+        foreach (var item in Model)
+        {
+            if (chapter != item.Chapter)
+             {
+                 chapter = item.Chapter;
+                <h2>@chapter</h2>
+             }
             @Html.Raw(item.Title)
-            <span>@item.Chapter : @item.Verse</span>
-            @Html.Raw(item.Word)
-        </p>
+            <span class="verse">
+                <a style="font-size: 11px; font-weight: 900; color: black">@item.Verse</a>
+                @Html.Raw(item.Word)
+            </span>
+        }
     }
+</div>
+@section styles{
+    <style>
+        #read-block .verse {
+            display: block;
+            margin-top: 7px;
+        }
+    </style>
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.btn-group').on("click", ".btn-read-style", function() {
+                $('.active').removeClass('active');
+                $(this).addClass('active');
+                $('.read-content').attr('id', $(this).attr("data-read"));
+            });
+        });
+    </script>
 }

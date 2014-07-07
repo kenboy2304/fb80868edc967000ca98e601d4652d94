@@ -20,6 +20,12 @@ namespace CDNVN.BibleOnline
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
+                      "~/Scripts/bootstrap-select.min.js"));
+
+            bundles.Add(new ScriptBundle("~/Content/bootstrap-select").Include(
+                      "~/Content/bootstrap-select.min.css"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));

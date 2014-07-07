@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/bootstrap-select.min.css")
     @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+    <style>
+
+    </style>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -32,11 +37,38 @@
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p class="scroll"></p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/bootstrap-select")
+    <script type="text/javascript">
+        var _divTop = $('.navbar-fixed-top').height();
+        var _preScroll = $(window).scrollTop();
+        var _height = 0;
+        var _fix = 0;
+        $(document).ready(function() {
+            $(window).scroll(function () { //detect page scroll
+                if ($(window).scrollTop() > _preScroll) {
+                    _height = _height + _preScroll - $(window).scrollTop();
+                    if (-_height > _divTop)
+                        _height = -_divTop;
+                    //alert(_height);
+                    
+                } else {
+                    _height =_height+_preScroll - $(window).scrollTop();
+                    if (_height >= 0) _height = 0;
+
+                }
+                $('.navbar-fixed-top').css("top", _height + "px");
+                _preScroll = $(window).scrollTop();
+                //$('.navbar-fixed-top').css("top","-"+ _fix + "px");
+                //alert($('.navbar-fixed-top').css("top"));
+            });
+        });
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
