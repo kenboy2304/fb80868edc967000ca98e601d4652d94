@@ -1,6 +1,20 @@
-﻿@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-inline navbar-form" }))
+﻿@{ var versions = (SelectList) ViewBag.BibleCode;}
+
+<div class="search-form">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        @Html.TextBox("q", Request.QueryString["q"], new {id="keyword", placeholder="vd: sa 1:1" })
+        <select name="v" id="version" class="selectpicker">
+            @foreach (var v in versions)
+            {
+                <option value="@v.Value.ToUpper()" @v.Selected data-subtext="- @v.Text.ToUpperInvariant()">@v.Value.ToUpper()</option>
+            }
+        </select>
+        <button type="submit" id="submit-button"><i class="icon-search"></i></button>
+    }
+</div><!-- end .search-form -->
+
+@section scripts
 {
-    @Html.TextBox("q", Request.QueryString["q"], new { @class = "form-control" })
-    @Html.DropDownList("v", (SelectList)ViewBag.BibleCode,"----chọn----", new {@class = "form-control bootstrap-select"}) 
-    <button type="submit" class="btn btn-danger">Tìm kiếm</button>
+    
 }

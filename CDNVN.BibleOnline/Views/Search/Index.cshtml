@@ -7,97 +7,141 @@
 }
 
 
-<div class="jumbotron">
-    <h2>Tìm kiếm: @ViewBag.Title -@Model.TotalItemCount kết quả</h2>
-    <div class="col-md-6">
-        @using (Html.BeginForm("Index", "Search", FormMethod.Get))
-        {
-            <p>
-                @Html.TextBox("q", Request.QueryString["q"], new { @class = "form-control", })
-            </p>
-            <p>
-                @Html.DropDownList("v", (SelectList)ViewBag.Bible, new { @class = "bootstrap-select form-control", data_width = "100%" })
-            </p>
-            <p>
-                @Html.DropDownList("from", (SelectList)ViewBag.FromBook, new { @class = "bootstrap-select form-control", data_live_search = "true", data_width = "100%" })
-            </p>
-            <p>
-                @Html.DropDownList("to", (SelectList)ViewBag.ToBook, new { @class = "bootstrap-select form-control", data_live_search = "true", data_width = "100%" })
-            </p>
-            <p><button type="submit" class="btn btn-danger">Tìm kiếm</button></p>
-        }
-        
-    </div>
-    <div class="clearfix"></div>
-</div>
 <div class="row">
-    @if (Model != null && Model.Any())
-    {
-        <div id="content-search">
-            @foreach (var item in Model)
-            {
-                var ad = item.Book.Name + " " + @item.Chapter + ":" + item.Verse;
-                <a href="@Url.Action("Index","Read",new{v=Request.QueryString["v"], q=ad})">@count/ @ad</a>
-                <p>
-                    @Html.Raw(item.Word)
-                </p>
-                count++;
-            }
-        </div>
+    <section class="advanced-form col-md-4">
+        <form action="#">
+            <div class="form-group">
+                <label for="#">Từ Khóa</label>
+                @Html.TextBox("q", Request.QueryString["q"])
+            </div>
+
+            <div class="form-group">
+                <label for="#">Bản Dịch</label>
+
+                <select name="v" class="selectpicker form-control" data-width="100%">
+                    @foreach (var v in (SelectList)ViewBag.Bible)
+{
+    <option value="@v.Value" data-subtext="@v.Text" selected="@v.Selected"> @v.Value.ToUpper()</option>
+}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="#">Từ</label>
+                <select name="from" id="#" class="selectpicker form-control" data-live-search="true" data-width="100%">
+                    @foreach (var from in (SelectList)ViewBag.FromBook)
+                    {
+                        <option value="@from.Value" selected="@from.Selected">@from.Text (@from.Value)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="#">Đến</label>
+                <select name="to" id="#" class="selectpicker form-control" data-live-search="true" data-width="100%">
+                    @foreach (var to in (SelectList)ViewBag.ToBook)
+                    {
+                        <option value="@to.Value" selected="@to.Selected">@to.Text (@to.Value)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Tìm kiếm">
+            </div>
+        </form>
+    </section><!-- end advanced-form -->
+
+    <div class="advanced-form-content col-md-8">
+        <section class="reading-header clearfix">
+            <h2 class="search-result-quote">Tìm kiếm thấy <span>2010</span> kết quả</h2>
+        </section>
+
+        <section id="reading-content" class="block-content"></section><!-- end #reading-content -->
+
+        <section class="reading-header clearfix">
+            <h2 class="search-result-quote">Tìm kiếm thấy <span>2010</span> kết quả</h2>
+        </section>
         <div class="loading">
             <img src="@Url.Content("~/Content/image/ajax-loader.gif")" />
         </div>
-    }
-</div>
-<div class="row"><h3>Tìm kiếm: @ViewBag.Title -@Model.TotalItemCount kết quả</h3></div>
+    </div><!-- end col-md-8 -->
+
+</div><!-- end row -->
 @section scripts
 {
     <script type="text/javascript">
         $('.bootstrap-select').selectpicker();
 
         var search = '@Request.QueryString["q"]';
-        $(document).ready(function () {
-            $("#content-search p:contains('@Request.QueryString["q"]')").css("background-color", "yellow");
-            $('.loading').hide();
-            var page = parseInt('@Model.PageNumber');
-            var pageCount = parseInt('@Model.PageCount');
-            var c = parseInt('@count');
 
-            $(window).scroll(function () { //detect page scroll
+        function Loadding(bookName, c, page, cBook) {
+            $.ajax({
+                url: '@Url.Action("Json")',
+                data: JSON.stringify({ v: '@Request.QueryString["v"]', q: '@Request.QueryString["q"]', from: '@Request.QueryString["from"]', to: '@Request.QueryString["to"]', page: page }),
+                contentType: "application/json",
+                traditional: true,
+                type: "POST",
+                beforeSend: function () {
+                    $('.loading').show();
+                },
+                success: function (r) {
+                    var html = "";
+                    if (r.contents.length > 0) {
+                        for (var i = 0; i < r.contents.length; i++) {
+                            if (r.contents[i].BookName != bookName) {
+                                if (c == 1) {
+                                    $('.search-result-quote span').html(r.total);
+                                    $('.reading-header').show();
+                                } else {
+                                    html = html + "<p> Trong sách " + bookName + " có " + (c - cBook) + " kết quả" + "</p>";
+                                }
+                                html = html +
+                                    "<h1 class='reading-title'><i class='icon-book'></i>" + r.contents[i].BookName + "</h1>";
+                                bookName = r.contents[i].BookName;
+                                cBook = c;
+                            }
+                            html = html + "<span class='verse'>"+c+". <a href='" + r.contents[i].Url + "' class='verse-add'>" + r.contents[i].BookName + " " + r.contents[i].Adress + "</a>" +
+                                "<span class='verse-content'>" + r.contents[i].Word + "</span></span>";
+
+                            if (c == r.total) {
+                                html = html + "<b> Trong sách " + bookName + " có " + (c - cBook) + " kết quả" + "</b></div></section>";
+                            }
+                            c++;
+                        }
+                        $('#reading-content').append(html);
+                        if (c <= r.total)
+                            Loadding(bookName, c, page + 1, cBook);
+                        else {
+                            $('.loading').hide();
+                        }
+                    } else {
+                        $('.loading').hide();
+                    }
+
+                },
+                error: function () {
+                    $('.loading').hide();
+                    $('.error').show();
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#content-search p:contains('@Request.QueryString["q"]')").css('background-color', 'yellow');
+            $('.loading').hide();
+            $('.reading-header').hide();
+            $('.error').hide();
+            var page = 1;
+            var c = 1;
+            Loadding("", c, page, 1);
+
+            @*$(window).scroll(function () { //detect page scroll
 
                 if ($(window).scrollTop() + $(window).height() == $(document).height())  //user scrolled to bottom of the page?
                 {
-
-                    if (page + 1 <= pageCount) {
-                        page++;
-                        $.ajax({
-                            url: '@Url.Action("Json")',
-                            data: JSON.stringify({ v: '@Request.QueryString["v"]', q: '@Request.QueryString["q"]', from: '@Request.QueryString["from"]', to: '@Request.QueryString["to"]', page: page }),
-                            contentType: "application/json",
-                            traditional: true,
-                            type: "POST",
-                            beforeSend: function () {
-                                $('.loading').show();
-                            },
-                            success: function (r) {
-                                var html = "";
-                                for (var i = 0; i < r.length; i++) {
-                                    html = html + "<a href='" + r[i].Url + "'>" + c + ". " + r[i].Adress + "</a>";
-                                    html = html + "<p>" + r[i].Word + "</p>";
-                                    c++;
-                                }
-                                $('#content-search').append(html);
-                                $('.loading').hide();
-                            },
-                            error: function () {
-                                alert("erro");
-                                $('.loading').hide();
-                            }
-                        });
-                    }
-
                 }
-            });
+            });*@
         });
     </script>
 }
+

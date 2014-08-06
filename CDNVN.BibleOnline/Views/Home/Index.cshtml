@@ -1,13 +1,188 @@
-﻿@{
+﻿@model IEnumerable<Book>
+@using CDNVN.BibleOnline.Models
+@{
     ViewBag.Title = "Home Page";
+    var gence = new Gences().List;
+    var group = 1;
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-</div>
+@if (Model != null && Model.Any())
+{
+    foreach (var book in Model)
+    {
+        if (book.Order == 1)
+        {
+            @Html.Raw("<section id=\"old-testament\" class=\"testament\"><h1 class=\"title\">Cựu ước</h1>")
+            @Html.Raw("<ul class=\"group-"+group+" group-book row\">")
+        }
+        if (book.Order == 6 || book.Order == 18 || book.Order == 23 || book.Order == 28 || book.Order == 44 || book.Order == 45 || book.Order == 58 || book.Order == 66)
+        {
+            @Html.Raw("</ul><!-- end .group-"+group+" -->")
+            group++;
+            @Html.Raw("<ul class=\"group-"+group+" group-book row\">")
+        }
+        
+        if (book.Order == 40)
+        {
+            @Html.Raw("</ul><!-- end .group-"+group+" -->")
+            group=1;
+            @Html.Raw("<section id=\"new-testament\" class=\"testament\"><h1 class=\"title\">Tân ước</h1>")
+            @Html.Raw("<ul class=\"group-"+group+" group-book row\">")
+        }
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="@book.Name" data-chapter="150">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">@book.CodeName</a>
+                <span class="label-shortcode">@book.TotalChapter</span>
+            </div>
+        </li>
+        if (book.Order == 66)
+        {
 
-<div class="row">
-    
-</div>
+            @Html.Raw("</ul></section>")
+        }
+    }
+}
+@*<section id="old-testament" class="testament">
+    <h1 class="title">Cựu ước</h1>
+    <ul class="group-1 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="150">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+    </ul><!-- end .group-1 -->
+
+    <ul class="group-2 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="50">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+
+    </ul><!-- end .group-2 -->
+
+    <ul class="group-3 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="50">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+    </ul><!-- end .group-3 -->
+</section><!-- end #new-testament -->
+
+<section id="new-testament" class="testament">
+    <h1 class="title">Tân ước</h1>
+    <ul class="group-1 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="150">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Xuất Ê-díp-tô Ký " data-chapter="40">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">xu</a>
+                <span class="label-shortcode">40</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Lê-vi Ký" data-chapter="27">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">le</a>
+                <span class="label-shortcode">27</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Dân-số Ký" data-chapter="36">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">dan</a>
+                <span class="label-shortcode">36</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Phục Truyền Luật Lệ Ký" data-chapter="34">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">phu</a>
+                <span class="label-shortcode">34</span>
+            </div>
+        </li>
+    </ul><!-- end .group-1 -->
+
+    <ul class="group-2 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="50">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Xuất Ê-díp-tô Ký " data-chapter="40">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">xu</a>
+                <span class="label-shortcode">40</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Lê-vi Ký" data-chapter="27">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">le</a>
+                <span class="label-shortcode">27</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Dân-số Ký" data-chapter="36">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">dan</a>
+                <span class="label-shortcode">36</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Phục Truyền Luật Lệ Ký" data-chapter="34">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">phu</a>
+                <span class="label-shortcode">34</span>
+            </div>
+        </li>
+    </ul><!-- end .group-2 -->
+
+    <ul class="group-3 group-book row">
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Sáng-Thế Ký" data-chapter="50">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">sa</a>
+                <span class="label-shortcode">50</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Xuất Ê-díp-tô Ký " data-chapter="40">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">xu</a>
+                <span class="label-shortcode">40</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Lê-vi Ký" data-chapter="27">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">le</a>
+                <span class="label-shortcode">27</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Dân-số Ký" data-chapter="36">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">dan</a>
+                <span class="label-shortcode">36</span>
+            </div>
+        </li>
+
+        <li class="book col-md-1 col-sm-1" data-toggle="tooltip" data-placement="top" title="Phục Truyền Luật Lệ Ký" data-chapter="34">
+            <div class="book-inner">
+                <a href="javascript:" class="chapter">phu</a>
+                <span class="label-shortcode">34</span>
+            </div>
+        </li>
+    </ul><!-- end .group-3 -->
+</section><!-- end #old-testament -->*@

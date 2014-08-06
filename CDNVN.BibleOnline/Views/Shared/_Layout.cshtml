@@ -1,74 +1,144 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/bootstrap-select.min.css")
-    @Scripts.Render("~/bundles/modernizr")
+    <meta charset="UTF-8">
+    <title>Kinh Thánh Online</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    @Styles.Render("~/Content/css/bootstrap")
+    @Styles.Render("~/Content/css/system")
+    @Styles.Render("~/content/themes/biblev1/css")
+    
+    
     @RenderSection("styles", required: false)
-    <style>
+    <body>
+        <!-- header -->
+        <header id="header">
+            <div class="container">
+                <div class="main-menu-bar">
+                    <div class="logo">
+                        <h1><a href="#"><img src="@Url.Content("~/Content/themes/biblev1/images/logo.png")" alt="Logo Kinh Thanh Online"></a></h1>
+                    </div>
 
-    </style>
-</head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    @Html.Action("_SearchForm", "Home")
+
+                    <div class="general-setting">
+                        <nav>
+                            <a href="#" class="setting button" data-toggle="tooltip" data-placement="left" title="Cài đặt"><i class="icon-cog"></i></a>
+                            <a href="#" class="help" data-toggle="tooltip" data-placement="right" title="Trợ giúp"><i class="icon-help"></i></a>
+                        </nav>
+                    </div>
+                </div><!-- end .main-menu-bar -->
+            </div>
+        </header>
+
+        <div id="wrapper" class="container">
+            @RenderBody()
+        </div><!-- end #wrapper -->
+        @Scripts.Render("~/theme/jquery")
+        @Scripts.Render("~/theme/bootstrap")
+        <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+        @Scripts.Render("~/themes/app")
+        
+        <script type="text/javascript">
+            $(function () {
+        
+                $("#keyword").autocomplete({
+                    source: function (request, response) {
+                        jQuery.get("home/autocomplate", {
+                            q: request.term
+                        }, function (data) {
+                            // assuming data is a JavaScript array such as
+                            // ["one@abc.de", "onf@abc.de","ong@abc.de"]
+                            // and not a string
+                            response(data);
+                        });
+                    }
+                });
+            });
+        </script>
+        @RenderSection("scripts", required: false)
+    </body>
+</html>
+
+
+
+
+
+
+
+
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - My ASP.NET Application</title>
+        @Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/bootstrap-select.min.css")
+        @Scripts.Render("~/bundles/modernizr")
+        @RenderSection("styles", required: false)
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-collapse">
+
+                    @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
                 @Html.ActionLink("Application name", "Index", "Home", null, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                @Html.Action("_SearchForm","Home")
-                <ul class="nav navbar-nav">
-                    
-                </ul>
+                </div>
+                <div class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav">
+
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-            <p class="scroll"></p>
-        </footer>
-    </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+                <p class="scroll"></p>
+            </footer>
+        </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/bootstrap-select")
-    <script type="text/javascript">
-        var _divTop = $('.navbar-fixed-top').height();
-        var _preScroll = $(window).scrollTop();
-        var _height = 0;
-        var _fix = 0;
-        $(document).ready(function() {
-            $(window).scroll(function () { //detect page scroll
-                if ($(window).scrollTop() > _preScroll) {
-                    _height = _height + _preScroll - $(window).scrollTop();
-                    if (-_height > _divTop)
-                        _height = -_divTop;
-                    //alert(_height);
-                    
-                } else {
-                    _height =_height+_preScroll - $(window).scrollTop();
-                    if (_height >= 0) _height = 0;
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/bootstrap-select")
+        <script type="text/javascript">
+            var _divTop = $('.navbar-fixed-top').height();
+            var _preScroll = $(window).scrollTop();
+            var _height = 0;
+            var _fix = 0;
+            $(document).ready(function() {
+                $(window).scroll(function () { //detect page scroll
+                    if ($(window).scrollTop() > _preScroll) {
+                        _height = _height + _preScroll - $(window).scrollTop();
+                        if (-_height > _divTop)
+                            _height = -_divTop;
+                        //alert(_height);
 
-                }
-                $('.navbar-fixed-top').css("top", _height + "px");
-                _preScroll = $(window).scrollTop();
-                //$('.navbar-fixed-top').css("top","-"+ _fix + "px");
-                //alert($('.navbar-fixed-top').css("top"));
+                    } else {
+                        _height =_height+_preScroll - $(window).scrollTop();
+                        if (_height >= 0) _height = 0;
+
+                    }
+                    $('.navbar-fixed-top').css("top", _height + "px");
+                    _preScroll = $(window).scrollTop();
+                    //$('.navbar-fixed-top').css("top","-"+ _fix + "px");
+                    //alert($('.navbar-fixed-top').css("top"));
+                });
             });
-        });
-    </script>
-    @RenderSection("scripts", required: false)
-</body>
-</html>
+        </script>
+        @RenderSection("scripts", required: false)
+    </body>
+    </html>*@
