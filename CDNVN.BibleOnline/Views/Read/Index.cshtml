@@ -21,7 +21,7 @@
             <select name="v" id="v" data-width="100%">
                 @foreach (var v in versions)
                 {
-                    <option value="@v.Value">@v.Text (@v.Value)</option>
+                    <option value="@v.Value" selected="@v.Selected">@v.Text (@v.Value)</option>
                 }
             </select>
         </div><!-- end .select-version -->
@@ -60,95 +60,78 @@
 @section scripts
 {
     <script type="text/javascript">
+        function LoadBible($this,v) {
+            $.ajax({
+                url: '@Url.Action("Json")',
+                data: JSON.stringify({ v: v, q: '@Request.QueryString["q"]' }),
+                contentType: "application/json",
+                traditional: true,
+                type: "POST",
+                beforeSend: function () {
+                    $this.find('.loading').show();
+
+                },
+                success: function (r) {
+                    var chapter = 0;
+                    var html = "";
+                    for (var i = 0; i < r.length; i++) {
+                        if (r[i].chapter != chapter) {
+                            if (chapter != 0) {
+                                html = html + "</div><!-- end .chapter -->";
+                            }
+                            html += "<div id='chapter-" + r[i].chapter + "' class='chapter'>";
+                            html += "<h2 class='chapter-stt'>" + r[i].chapter + " </h2>";
+                            chapter = r[i].chapter;
+                        }
+                        html += "<span class='verse'><sub>" + r[i].verse + " </sub>" + r[i].word + "</span>";
+                    }
+                    html = html + "</div><!-- end .chapter -->";
+                    $this.find('.loading').before(html);
+                    $this.find('.loading').hide();
+                    $('#reading-content .verse').css({ 'font-size': current });
+                },
+                error: function () {
+                    $('.loading').hide();
+                    $('.error').show();
+                }
+            });
+        }
+        //
         $(document).ready(function () {
-            $('.version').addClass("col-md-6");
             $('.loading').hide();
             $('.error').hide();
+            $('#formSearch').submit(function () {
+                var key = $('#keyword').val();
+                if (key.match(/\d+$/)) {
+                    var url = window.location.pathname;
+                    url = url + "?v=" + $('#version').val() + "&q=" + $('#keyword').val() + location.hash;
+                    location.href = url;
+                    //alert(url);
+                    return false;
+                } 
+            });
 
+            var version = location.hash;
+            
+            if (version != "") {
+                version = version.replace("#", "");
+                var html = $('.version').html();
+                html = "<div class='version col-md-6 pararell-content'>" + html + "</div>";
+                $('#reading-content').append(html);
+                $('#reading-content .pararell-content').find("#v").val(version);
+                $('#reading-content .pararell-content .chapter').remove();
+                LoadBible($('#reading-content .pararell-content'), version);
+                $('.reading-setting .pararell').attr("data-display", "hide");
+                $('.version').addClass('col-md-6');
+            }
             $('#reading-content').delegate('#v', 'change', function () {
-                $this = $(this).parent().parent();
                 
+                $this = $(this).parent().parent();
+                if ($this.hasClass("pararell-content"))
+                    location.hash = $(this).val();
                 $this.find('.chapter').remove();
-                $.ajax({
-                    url: '@Url.Action("Json")',
-                    data: JSON.stringify({ v: $(this).val(), q: '@Request.QueryString["q"]'}),
-                    contentType: "application/json",
-                    traditional: true,
-                    type: "POST",
-                    beforeSend: function () {
-                        $(this).find('.loading').show();
-                    },
-                    success: function (r) {
-                        var chapter = 0;
-                        var html = "";
-                        for (var i = 0; i < r.length; i++) {
-                            if (r[i].chapter != chapter) {
-                                if (chapter != 0) {
-                                    html = html+ "</div><!-- end .chapter -->";
-                                }
-
-                                html += "<div id='chapter-" + r[i].chapter + "' class='chapter'>";
-                                html += "<h2 class='chapter-stt'>"+r[i].chapter + " </h2>";
-                                chapter = r[i].chapter;
-                            }
-                            html += "<span class='verse'><sub>" + r[i].verse + " </sub>" + r[i].word + "</span>";
-                        }
-                        html = html + "</div><!-- end .chapter -->";
-                        $this.find('.loading').before(html);
-                        $('#reading-content .verse').css({ 'font-size': current });
-                        //$('.loading').hide();
-                    },
-                    error: function () {
-                        $('.loading').hide();
-                        $('.error').show();
-                    }
-                });
+                LoadBible($this, $(this).val());
             });
         });
     </script>
 }
-
-@*<div class="btn-group">
-        <button type="button" class="btn-read-style btn btn-default active" data-read="read-block">Block</button>
-        <button type="button" class="btn-read-style btn btn-default" data-read="read-inline">Inline</button>
-    </div>
-    <h2>@ViewBag.Title</h2>
-    @{ var chapter = 0;}
-    <div id="read-block" class="row read-content">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var item in Model)
-            {
-                if (chapter != item.Chapter)
-                {
-                    chapter = item.Chapter;
-                    <h2>@chapter</h2>
-                }
-                @Html.Raw(item.Title)
-                <span class="verse">
-                    <a style="font-size: 11px; font-weight: 900; color: black">@item.Verse</a>
-                    @Html.Raw(item.Word)
-                </span>
-            }
-        }
-    </div>
-    @section styles{
-        <style>
-            #read-block .verse {
-                display: block;
-                margin-top: 7px;
-            }
-        </style>
-    }
-    @section scripts
-{
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('.btn-group').on("click", ".btn-read-style", function () {
-                    $('.active').removeClass('active');
-                    $(this).addClass('active');
-                    $('.read-content').attr('id', $(this).attr("data-read"));
-                });
-            });
-        </script>
-    }*@

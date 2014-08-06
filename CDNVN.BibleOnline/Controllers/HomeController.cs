@@ -35,7 +35,8 @@ namespace CDNVN.BibleOnline.Controllers
 
             if (string.IsNullOrWhiteSpace(q))
                 return null;
-            var data = db.Books.Where(b => b.Name.StartsWith(q) || b.CodeName.StartsWith(q));
+            q = q.ToLower().Replace("-", " ");
+            var data = db.Books.Where(b => b.Name.Replace("-"," ").ToLower().StartsWith(q) || b.CodeName.ToLower().StartsWith(q));
             var dataArray = new List<string>();
             foreach (var book in data)
             {

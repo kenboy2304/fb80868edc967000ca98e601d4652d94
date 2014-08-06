@@ -83,10 +83,12 @@ $(document).ready(function() {
 	        $('#reading-content').append(html);
 	        $('.version').addClass('col-md-6');
 	        $(this).attr("data-display", "hide");
+	        location.hash = $("#v").val();
 	    } else {
 	        $('.version').removeClass('col-md-6');
 	        $('.pararell-content').remove();
 	        $(this).attr("data-display", "show");
+	        location.hash = "";
 	    }
 	    return false;
 	});
