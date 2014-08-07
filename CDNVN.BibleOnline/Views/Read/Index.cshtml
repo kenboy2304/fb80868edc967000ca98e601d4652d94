@@ -6,7 +6,7 @@
     <h1 class="reading-title"><i class="icon-book"></i>@ViewBag.Title</h1>
     <div class="reading-setting">
         <nav>
-            <a href="#" class="pararell" data-display="show">pararell</a>
+            <a href="#" class="pararell hide-phone" data-display="show">pararell</a>
             <a href="#" class="light">light</a>
             <a href="#" class="block">block</a>
             <a href="#" class="font-minus">font minus</a>
@@ -21,11 +21,11 @@
             <select name="v" id="v" data-width="100%">
                 @foreach (var v in versions)
                 {
-                    <option value="@v.Value" selected="@v.Selected">@v.Text (@v.Value)</option>
+                    <option value="@v.Value" selected="@v.Selected">@v.Text (@v.Value.ToUpper())</option>
                 }
             </select>
         </div><!-- end .select-version -->
-        @{ var chapter = 0;}
+        @{ var chapter = 0; var temp="";}
         @if (Model != null && Model.Any())
         {
             foreach (var item in Model)
@@ -38,20 +38,37 @@
                     }
                     
                     @Html.Raw("<div id='chapter-"+item.Chapter+"' class='chapter'>")
-                    @Html.Raw("<h2 class='chapter-stt'>"+item.Chapter+" </h2>")
-                    chapter = item.Chapter;
                 }
-                <span class="verse">
-                    <sub>@item.Verse</sub>
-                    @Html.Raw(item.Word)
-                </span>
+                if (!string.IsNullOrWhiteSpace(item.Title))
+                    {
+                        @Html.Raw("<div class=\"sub-charter-title\">"+item.Title+"</div>")
+                    }
+                if (chapter != item.Chapter)
+                {
+                    @Html.Raw("<h1 class='chapter-stt'>"+item.Chapter+" </h1>")
+                    chapter = item.Chapter;
+                }    
+                
+                if (!string.IsNullOrWhiteSpace(item.Word))
+                {
+                    <span class="verse">
+                        <sub @(!string.IsNullOrWhiteSpace(temp) ? Html.Raw("class=\"two\"") : Html.Raw(""))>@(!string.IsNullOrWhiteSpace(temp) ? Html.Raw(temp) : Html.Raw("")) @item.Verse</sub>
+                        @Html.Raw(item.Word)
+                    </span>
+                    temp = "";
+                }
+                else
+                {
+                    temp = item.Verse.ToString()+"-";
+                }
+                
             }
         }
         @Html.Raw("</div><!-- end .chapter -->")
-        <div class="loading" style="text-align: center">
+        <div class="loading" style="text-align: center; display: none;">
             <img src="@Url.Content("~/Content/image/ajax-loader.gif")"/>
         </div>
-        <div class="error" style="text-align: center">
+        <div class="error" style="text-align: center; display: none;">
             LỖI TẢI TRANG
         </div>
     </div><!-- .version -->
@@ -74,16 +91,28 @@
                 success: function (r) {
                     var chapter = 0;
                     var html = "";
+                    var temp = "";
                     for (var i = 0; i < r.length; i++) {
                         if (r[i].chapter != chapter) {
                             if (chapter != 0) {
                                 html = html + "</div><!-- end .chapter -->";
                             }
                             html += "<div id='chapter-" + r[i].chapter + "' class='chapter'>";
-                            html += "<h2 class='chapter-stt'>" + r[i].chapter + " </h2>";
+                        }
+                        if (r[i].title != "") {
+                            html = html + "<div class=\"sub-charter-title\">" + r[i].title +"</div>";
+                        }
+                        if (r[i].chapter != chapter) {
+                            html += "<h1 class='chapter-stt'>" + r[i].chapter + " </h1>";
                             chapter = r[i].chapter;
                         }
-                        html += "<span class='verse'><sub>" + r[i].verse + " </sub>" + r[i].word + "</span>";
+                        if (r[i].word != "") {
+
+                            html += "<span class='verse'><sub " + (temp != 0 ? "class=\"two\"" : "") +">" +temp+ r[i].verse + " </sub>" + r[i].word + "</span>";
+                            temp = "";
+                        } else {
+                            temp = r[i].verse+"-";
+                        }
                     }
                     html = html + "</div><!-- end .chapter -->";
                     $this.find('.loading').before(html);

@@ -26,8 +26,9 @@ namespace CDNVN.BibleOnline.Controllers
                 return View();
             }
             var address = new BibleAddress(q);
+            var bookOrder = OrderBook(address.Book);
             var r = db.Contents.Where(c => c.Book.Bible.Version.ToLower() == v.ToLower())
-                .Where(c => c.Book.CodeName.ToLower() == address.Book.ToLower() || c.Book.Name.ToLower().StartsWith(address.Book))
+                .Where(c => c.Book.Order == bookOrder)
                 .Where(c => c.Chapter >= address.From.Chapter && c.Chapter <= address.To.Chapter)
                 .Where(c => !(c.Chapter == address.From.Chapter && c.Verse < address.From.Verse))
                 .Where(c => !(c.Chapter == address.To.Chapter && c.Verse > address.To.Verse))
@@ -35,6 +36,13 @@ namespace CDNVN.BibleOnline.Controllers
             var book = r.First().Book.Name;
             ViewBag.Title = book + " " + address.Adress;
             return View(r.ToList());
+        }
+
+        public int OrderBook(string str)
+        {
+            return  db.Books.First(book =>
+                book.CodeName.ToLower() == str.ToLower() ||
+                (book.Name.ToLower().StartsWith(str.ToLower()) && str.Length > 2)).Order;
         }
         public ActionResult Json(string v = "", string q = "")
         {
@@ -49,15 +57,16 @@ namespace CDNVN.BibleOnline.Controllers
             v = v.ToLower();
             
             var address = new BibleAddress(q);
+            var bookOrder = OrderBook(address.Book);
             var r = db.Contents.Where(c => c.Book.Bible.Version.ToLower() == v.ToLower())
-                .Where(c => c.Book.CodeName.ToLower() == address.Book.ToLower() || c.Book.Name.ToLower().StartsWith(address.Book))
+                .Where(c=>c.Book.Order==bookOrder)
                 .Where(c => c.Chapter >= address.From.Chapter && c.Chapter <= address.To.Chapter)
                 .Where(c => !(c.Chapter == address.From.Chapter && c.Verse < address.From.Verse))
                 .Where(c => !(c.Chapter == address.To.Chapter && c.Verse > address.To.Verse))
                 .OrderBy(c => c.Chapter).ThenBy(c => c.Verse);
             var book = r.First().Book.Name;
             ViewBag.Title = book + " " + address.Adress;
-            return Json(r.Select(verse=>new {chapter = verse.Chapter, verse = verse.Verse, word = verse.Word}), JsonRequestBehavior.AllowGet);
+            return Json(r.Select(verse=>new {chapter = verse.Chapter,title =verse.Title, verse = verse.Verse, word = verse.Word}), JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

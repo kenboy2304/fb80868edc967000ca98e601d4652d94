@@ -1,0 +1,99 @@
+@media (max-width: 600px) {
+
+	#wrapper, #reading-content { margin-top: 10px; }
+    .lt,.mt
+    {
+        font-weight: 500;
+    }
+    .lt
+    {
+        font-size: 25px;
+    }
+    .mt
+    {
+        font-size: 23px;
+    }
+	.logo, .general-setting {
+		display: none;
+	}
+
+	.search-form .bootstrap-select {
+		width: 100px !important;
+		position: initial;
+	}
+
+	.search-form .bootstrap-select .dropdown-menu {
+		position: fixed;
+		top: 200px;
+		left: 50%;
+		background: white; 
+		padding: 20px 0;
+		max-width: 300px;
+		min-width: 0px;
+		margin-left: -150px;
+		border-radius: 3px;
+		box-shadow: 0px 2px 5px rgb(112, 112, 112);
+	}
+	
+	.search-form {
+		width: 100%;
+	}
+
+	.search-form #keyword {
+		width: calc(100% - 100px - 33px);
+	}
+	
+	.search-form .bootstrap-select .dropdown-menu li {
+		margin-bottom: 10px;
+		padding-bottom: 10px;
+		padding-left: 20px;
+		padding-right: 20px;
+		border-bottom: 1px solid #efefef;
+	}
+	.search-form .bootstrap-select .dropdown-menu li:last-child {
+		border-bottom: none;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+
+	.search-form .bootstrap-select .dropdown-menu li a .text {
+		color: #13b9d2;
+		font-size: 18px;
+	}
+	
+	.search-form .bootstrap-select .dropdown-menu li a:focus  {
+		outline: none;
+	}
+
+	.search-form .bootstrap-select .dropdown-menu li a:focus small, .search-form .bootstrap-select .dropdown-menu li:hover small {
+		color: #13b9d2 !important; 
+	}
+
+	/* button setting */
+	.reading-setting {
+		position: fixed;
+		right: 15px;
+		top: 64px;
+		z-index: 10;
+	}
+
+	.reading-setting a {
+		display: block;
+		margin-bottom: 10px;
+		opacity: 1;
+	}
+
+	.reading-setting .cog {
+		display: block;
+		background: #e44631;
+		border-radius: 3px;
+		text-indent: 0;
+		text-align: center;
+		line-height: 41px;
+	}
+
+	.reading-setting .cog i {
+		font-size: 22px;
+		color: white;
+	}
+}

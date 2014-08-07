@@ -9,7 +9,7 @@
 
 <div class="row">
     <section class="advanced-form col-md-4">
-        <form action="#">
+        <form action="@Url.Action("Index","Search")">
             <div class="form-group">
                 <label for="#">Từ Khóa</label>
                 @Html.TextBox("q", Request.QueryString["q"])
@@ -31,7 +31,7 @@
                 <select name="from" id="#" class="selectpicker form-control" data-live-search="true" data-width="100%">
                     @foreach (var from in (SelectList)ViewBag.FromBook)
                     {
-                        <option value="@from.Value" selected="@from.Selected">@from.Text (@from.Value)</option>
+                        <option value="@from.Value" selected="@from.Selected">@from.Text</option>
                     }
                 </select>
             </div>
@@ -41,7 +41,7 @@
                 <select name="to" id="#" class="selectpicker form-control" data-live-search="true" data-width="100%">
                     @foreach (var to in (SelectList)ViewBag.ToBook)
                     {
-                        <option value="@to.Value" selected="@to.Selected">@to.Text (@to.Value)</option>
+                        <option value="@to.Value" selected="@to.Selected">@to.Text</option>
                     }
                 </select>
             </div>
@@ -52,18 +52,19 @@
     </section><!-- end advanced-form -->
 
     <div class="advanced-form-content col-md-8">
-        <section class="reading-header clearfix">
-            <h2 class="search-result-quote">Tìm kiếm thấy <span>2010</span> kết quả</h2>
+        <section class="reading-header clearfix" style="display: none">
+            <h2 class="search-result-quote">Tìm kiếm thấy <span>0</span> kết quả</h2>
         </section>
 
         <section id="reading-content" class="block-content"></section><!-- end #reading-content -->
-
-        <section class="reading-header clearfix">
-            <h2 class="search-result-quote">Tìm kiếm thấy <span>2010</span> kết quả</h2>
-        </section>
+        
         <div class="loading">
             <img src="@Url.Content("~/Content/image/ajax-loader.gif")" />
         </div>
+        <section class="reading-header clearfix" style="display: none">
+            <h2 class="search-result-quote">Tìm kiếm thấy <span>0</span> kết quả</h2>
+        </section>
+
     </div><!-- end col-md-8 -->
 
 </div><!-- end row -->
@@ -104,7 +105,7 @@
                                 "<span class='verse-content'>" + r.contents[i].Word + "</span></span>";
 
                             if (c == r.total) {
-                                html = html + "<b> Trong sách " + bookName + " có " + (c - cBook) + " kết quả" + "</b></div></section>";
+                                html = html + "<p> Trong sách " + bookName + " có " + (c +1 - cBook) + " kết quả" + "</p></div></section>";
                             }
                             c++;
                         }
@@ -115,6 +116,8 @@
                             $('.loading').hide();
                         }
                     } else {
+                        if (cBook == 1)
+                            $('#reading-content').append("Không tìm thấy kết quả nào!!!");
                         $('.loading').hide();
                     }
 

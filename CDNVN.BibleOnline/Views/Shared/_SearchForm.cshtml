@@ -4,11 +4,11 @@
 
     @using (Html.BeginForm("Index", "Home", FormMethod.Post, new{Id="formSearch"}))
     {
-        @Html.TextBox("q", Request.QueryString["q"], new { id = "keyword", placeholder = "vd: sa 1:1" })
+        @Html.TextBox("q", Request.QueryString["q"], new { id = "keyword", placeholder = "Nhập địa chỉ hoặc tìm kiếm..." })
         <select name="v" id="version" class="selectpicker">
             @foreach (var v in versions)
 {
-    <option value="@v.Value.ToUpper()" selected="@v.Selected" data-subtext="- @v.Text.ToUpperInvariant()">@v.Value.ToUpper()</option>
+    <option value="@v.Value" selected="@v.Selected" data-subtext="- @v.Text">@v.Value.ToUpper()</option>
 }
         </select>
         <button type="submit" id="submit-button"><i class="icon-search"></i></button>

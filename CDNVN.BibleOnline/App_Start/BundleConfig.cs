@@ -9,7 +9,8 @@ namespace CDNVN.BibleOnline
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/theme/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery-ui-{version}.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
@@ -20,11 +21,12 @@ namespace CDNVN.BibleOnline
                       "~/Scripts/bootstrap.min.js",
                       "~/Scripts/respond.js",
                       "~/Scripts/bootstrap-select.min.js"));
-            
+
             bundles.Add(new ScriptBundle("~/themes/app").Include(
                      "~/Scripts/themes/biblev1/app.js"));
 
             bundles.Add(new StyleBundle("~/Content/css/bootstrap").Include(
+                     "~/Content/css/jquery-ui.css",
                      "~/Content/css/bootstrap-select.min.css",
                      "~/Content/css/bootstrap.min.css"));
 
@@ -33,7 +35,7 @@ namespace CDNVN.BibleOnline
                      "~/Content/css/icon-font.css"));
 
 
-            bundles.Add(new StyleBundle("~/content/themes/biblev1/css").Include(     
+            bundles.Add(new StyleBundle("~/content/themes/biblev1/css").Include(
                      "~/Content/themes/biblev1/style.css"));
         }
     }

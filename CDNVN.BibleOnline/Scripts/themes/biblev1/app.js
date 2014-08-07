@@ -137,23 +137,60 @@ $(document).ready(function() {
 		$(this).toggleClass('selected');
 	});
 
-	//
-	
-		var $window = $(window),
-			$searchForm = $('.advanced-form'),
-			offset = $searchForm.offset(),
-			topPadding = 30;
+	//following search form
+	if($(window).width() > 992) {
+		if($('.advanced-form').length > 0) {
+			var $window = $(window),
+				$searchForm = $('.advanced-form'),
+				topPadding = 30,
+				offset = $searchForm.offset();
 
-		$(window).scroll(function() {
-			if($window.scrollTop() > offset.top) {
-				$searchForm.stop().animate({
-					marginTop: $window.scrollTop() - offset.top + topPadding
-				}, 400);
-			} else {
-				$searchForm.stop().animate({
-					marginTop: 0
-				});	
-			}
+			$(window).scroll(function() {
+				if($window.scrollTop() > offset.top) {
+					$searchForm.stop().animate({
+						marginTop: $window.scrollTop() - offset.top + topPadding
+					}, 400);
+				} else {
+					$searchForm.stop().animate({
+						marginTop: 0
+					});	
+				}
+			});
+		}
+	}
+		
+		
+	//Responsive search form
+	var dropdownMenu = $('.search-form .bootstrap-select .dropdown-menu');
+	if($(window).width() <= 600) {
+		dropdownMenu.find('.selectpicker').removeClass('dropdown-menu');
+		$('.search-form .dropdown-toggle').on('click', function() {
+			$('body').append('<div class="overlay"></div>');
 		});
+
+		dropdownMenu.find('.selectpicker li').on('click', function() {
+			$('.overlay').remove();
+		});
+
+		$('.overlay').on('click', function() {
+			$(this).remove();
+		});
+
+		//button setting
+		var readingSetting = $('.reading-setting');
+		readingSetting.prepend('<a class="cog" href="#"><i class="icon-cog"></i></a>')
+		
+		readingSetting.find('nav a').hide();
+
+		readingSetting.find('.cog').click(function() {
+			if(readingSetting.find('nav a').is(':hidden')) {
+				readingSetting.find('nav a').fadeIn();
+			} else {
+				readingSetting.find('nav a').fadeOut();
+			}
+
+			return false;
+		});
+	}
 
 });
